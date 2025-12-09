@@ -56,7 +56,7 @@
 import { Routes, Route } from "react-router-dom";
 import MainLayout from "./layout/MainLayout";
 import AdminLayout from "./layout/AdminLayout";
-import "./App.css";
+// import "./App.css";
 
 // Public pages
 import Home from "./pages/Home";
