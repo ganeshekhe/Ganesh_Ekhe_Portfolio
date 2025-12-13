@@ -7,15 +7,25 @@ import { ExternalLink, Github, Layers } from "lucide-react";
 export default function Projects() {
   const [projects, setProjects] = useState([]);
 
+  // const getProjects = async () => {
+  //   try {
+  //     const res = await fetch(`${API_URL}/projects`);
+  //     const data = await res.json();
+  //     setProjects(data);
+  //   } catch (error) {
+  //     console.log("Project Fetch Error:", error);
+  //   }
+  // };
   const getProjects = async () => {
-    try {
-      const res = await fetch(`${API_URL}/projects`);
-      const data = await res.json();
-      setProjects(data);
-    } catch (error) {
-      console.log("Project Fetch Error:", error);
-    }
-  };
+  try {
+    const res = await fetch(`${API_URL}/api/projects`);
+    const data = await res.json();
+    setProjects(data);
+  } catch (error) {
+    console.log("Project Fetch Error:", error);
+  }
+};
+
 
   useEffect(() => {
     getProjects();
