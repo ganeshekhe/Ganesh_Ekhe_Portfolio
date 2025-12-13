@@ -388,20 +388,20 @@ export default function ManageProjects() {
 
   // ⭐ Open Edit Modal
   const openEdit = (p) => {
-    setEditMode(true);
-    setEditingProjectId(p._id);
+  setEditMode(true);
+  setEditingProjectId(p._id);
 
-    setForm({
-      title: p.title,
-      description: p.description,
-      tech: p.tech,
-      github: p.github,
-      live: p.live,
-      image: null,
-    });
+  setForm({
+    title: p.title,
+    description: p.description,
+    tech: p.tech,
+    github: p.github,
+    live: p.live,
+    image: null,
+  });
 
-    setPreview(`${API}/uploads/${p.image}`);
-  };
+  setPreview(`${API}/api/projects/image/${p.image}`);
+};
 
   // ⭐ Update Project
   const updateProject = async () => {
@@ -486,9 +486,9 @@ export default function ManageProjects() {
             className="bg-white shadow-lg border border-gray-200 p-5 rounded-2xl flex gap-4"
           >
             <img
-              src={`${API}/uploads/${p.image}`}
-              className="w-32 h-32 object-cover rounded-xl shadow"
-            />
+  src={`${API}/api/projects/image/${p.image}`}
+  className="w-32 h-32 object-cover rounded-xl shadow"
+/>
 
             <div className="flex-1">
               <h3 className="text-lg font-bold text-gray-800">{p.title}</h3>
