@@ -1,33 +1,21 @@
 
 import { useEffect, useState } from "react";
-// import { API_URL } from "../config";
-const API_URL = import.meta.env.VITE_API_URL;
+import { API_URL } from "../config";
 import { motion } from "framer-motion";
 import { ExternalLink, Github, Layers } from "lucide-react";
 
 export default function Projects() {
   const [projects, setProjects] = useState([]);
 
-  // const getProjects = async () => {
-  //   try {
-  //     const res = await fetch(`${API_URL}/projects`);
-  //     const data = await res.json();
-  //     setProjects(data);
-  //   } catch (error) {
-  //     console.log("Project Fetch Error:", error);
-  //   }
-  // };
   const getProjects = async () => {
-  try {
-    // const res = await fetch(`${API_URL}/api/projects`);
-     const res = await fetch(`${API_URL}/api/projects`);
-    const data = await res.json();
-    setProjects(data);
-  } catch (error) {
-    console.log("Project Fetch Error:", error);
-  }
-};
-
+    try {
+      const res = await fetch(`${API_URL}api/projects`);
+      const data = await res.json();
+      setProjects(data);
+    } catch (error) {
+      console.log("Project Fetch Error:", error);
+    }
+  };
 
   useEffect(() => {
     getProjects();
