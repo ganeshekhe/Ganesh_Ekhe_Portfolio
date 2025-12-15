@@ -10,7 +10,8 @@ export default function Skills() {
   const [skills, setSkills] = useState([]);
 
   useEffect(() => {
-    fetch(API_URL + "/skills")
+fetch(`${API_URL}/api/skills`)
+
       .then((r) => r.json())
       .then((d) => setSkills(d))
       .catch((err) => console.log(err));

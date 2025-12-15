@@ -11,7 +11,8 @@ export default function Skills() {
 
   const load = async () => {
     try {
-      const res = await fetch(API_URL + "/skills");
+      const res = await fetch(`${API_URL}/api/skills`)
+;
       const data = await res.json();
       setSkills(data);
     } catch (err) {
