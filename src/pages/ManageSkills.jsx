@@ -469,9 +469,21 @@ export default function ManageSkills() {
   const [loading, setLoading] = useState(false);
 
   // Load Skills
+  // const loadSkills = async () => {
+  //   try {
+  //     const res = await fetch(`${API}/skills`, {
+  //       headers: { Authorization: "Bearer " + token },
+  //     });
+  //     const data = await res.json();
+  //     setSkills(data);
+  //   } catch (err) {
+  //     console.log("Skill Fetch Error:", err);
+  //   }
+  // };
+
   const loadSkills = async () => {
     try {
-      const res = await fetch(`${API}/skills`, {
+      const res = await fetch(`${API}api/skills`, {
         headers: { Authorization: "Bearer " + token },
       });
       const data = await res.json();
@@ -480,6 +492,7 @@ export default function ManageSkills() {
       console.log("Skill Fetch Error:", err);
     }
   };
+
 
   useEffect(() => {
     loadSkills();
