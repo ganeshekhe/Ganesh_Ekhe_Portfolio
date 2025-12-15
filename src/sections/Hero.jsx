@@ -12,7 +12,9 @@ export default function Hero() {
   const API = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
-    fetch(API + "/profile")
+    // fetch(API + "/profile")
+    fetch(`${API}/api/profile`)
+
       .then((r) => r.json())
       .then((d) => setProfile(d));
   }, []);

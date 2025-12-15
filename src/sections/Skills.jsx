@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from "react";
-import { API_URL } from "../config";
+// import { API_URL } from "../config";
+const API_URL = import.meta.env.VITE_API_URL;
 import { motion } from "framer-motion";
 
 // Lucide icons (fallback)

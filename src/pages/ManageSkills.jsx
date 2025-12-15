@@ -180,7 +180,8 @@
 
 
 import { useEffect, useState } from "react";
-import { API_URL } from "../config";
+// import { API_URL } from "../config";
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function ManageSkills() {
   const [skills, setSkills] = useState([]);
