@@ -182,8 +182,6 @@
 // import { useEffect, useState } from "react";
 // // import { API_URL } from "../config";
 // const API_URL = import.meta.env.VITE_API_URL;
-
-
 // export default function ManageSkills() {
 //   const [skills, setSkills] = useState([]);
 //   const [form, setForm] = useState({
@@ -443,12 +441,12 @@
 //   );
 // }
 
+
 import { useEffect, useState } from "react";
-import { Trash2, Pencil, X, PlusCircle } from "lucide-react";
+import { Trash2, Pencil, PlusCircle } from "lucide-react";
 import { motion } from "framer-motion";
 
-const API = import.meta.env.VITE_API_URL;
-const token = localStorage.getItem("token");
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function ManageSkills() {
   const [skills, setSkills] = useState([]);
@@ -464,20 +462,29 @@ export default function ManageSkills() {
     order: 0,
   });
   const [preview, setPreview] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [editingSkillId, setEditingSkillId] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const token = localStorage.getItem("token");
 
   // Load Skills
   const loadSkills = async () => {
+    setLoading(true);
     try {
-      const res = await fetch(`${API}/skills`, {
+      const res = await fetch(`${API_URL}/api/skills`, {
         headers: { Authorization: "Bearer " + token },
       });
+      if (!res.ok) {
+        const err = await res.json();
+        console.log("Fetch Skills Error:", err);
+        return;
+      }
       const data = await res.json();
       setSkills(data);
     } catch (err) {
       console.log("Skill Fetch Error:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -485,7 +492,7 @@ export default function ManageSkills() {
     loadSkills();
   }, []);
 
-  // Handle image preview
+  // Handle file preview
   const handleFile = (e) => {
     const f = e.target.files[0];
     setForm({ ...form, iconFile: f });
@@ -521,16 +528,13 @@ export default function ManageSkills() {
       fd.append("level", String(form.level));
       fd.append("difficulty", String(form.difficulty));
       fd.append("category", form.category);
-      fd.append(
-        "experience",
-        form.experience ? `${form.experience} months` : "0 months"
-      );
+      fd.append("experience", form.experience ? `${form.experience} months` : "0 months");
       fd.append("usedInProjects", String(form.usedInProjects));
       fd.append("order", String(form.order));
       if (form.iconFile) fd.append("icon", form.iconFile);
       else if (form.iconName) fd.append("iconName", form.iconName);
 
-      const url = editMode ? `${API}/skills/${editingSkillId}` : `${API}/skills`;
+      const url = editMode ? `${API_URL}/api/skills/${editingSkillId}` : `${API_URL}/api/skills`;
       const method = editMode ? "PUT" : "POST";
 
       const res = await fetch(url, {
@@ -558,7 +562,7 @@ export default function ManageSkills() {
   const deleteSkill = async (id) => {
     if (!confirm("Delete this skill?")) return;
     try {
-      await fetch(`${API}/skills/${id}`, {
+      await fetch(`${API_URL}/api/skills/${id}`, {
         method: "DELETE",
         headers: { Authorization: "Bearer " + token },
       });
@@ -568,7 +572,7 @@ export default function ManageSkills() {
     }
   };
 
-  // Open Edit Modal
+  // Open Edit
   const openEdit = (s) => {
     setEditMode(true);
     setEditingSkillId(s._id);
@@ -583,7 +587,7 @@ export default function ManageSkills() {
       iconName: s.icon && !s.icon.includes("/") ? s.icon : "",
       order: s.order,
     });
-    setPreview(s.icon && s.icon.includes("/") ? `${API}/uploads/${s.icon}` : null);
+    setPreview(s.icon && s.icon.includes("/") ? `${API_URL}/uploads/${s.icon}` : null);
   };
 
   return (
@@ -591,114 +595,47 @@ export default function ManageSkills() {
       <h1 className="text-3xl font-bold mb-6">Manage Skills</h1>
 
       {/* Add / Edit Form */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-white p-6 rounded-xl shadow mb-8 border"
-      >
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white p-6 rounded-xl shadow mb-8 border">
         <h2 className="text-xl mb-4 font-semibold flex items-center gap-2">
           {editMode ? <Pencil size={20} /> : <PlusCircle size={20} />}
           {editMode ? "Edit Skill" : "Add Skill"}
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input
-            className="border p-2 rounded"
-            placeholder="Skill Name"
-            value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
-          />
-          <input
-            type="number"
-            className="border p-2 rounded"
-            placeholder="Level (0-100)"
-            value={form.level}
-            onChange={(e) => setForm({ ...form, level: Number(e.target.value) })}
-          />
-          <input
-            type="number"
-            className="border p-2 rounded"
-            placeholder="Difficulty (1-10)"
-            value={form.difficulty}
-            onChange={(e) => setForm({ ...form, difficulty: Number(e.target.value) })}
-          />
-          <input
-            className="border p-2 rounded"
-            placeholder="Category"
-            value={form.category}
-            onChange={(e) => setForm({ ...form, category: e.target.value })}
-          />
-          <input
-            type="number"
-            className="border p-2 rounded"
-            placeholder="Experience (months)"
-            value={form.experience}
-            onChange={(e) => setForm({ ...form, experience: e.target.value })}
-          />
-          <input
-            type="number"
-            className="border p-2 rounded"
-            placeholder="Used in projects"
-            value={form.usedInProjects}
-            onChange={(e) => setForm({ ...form, usedInProjects: Number(e.target.value) })}
-          />
-
+          <input className="border p-2 rounded" placeholder="Skill Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+          <input type="number" className="border p-2 rounded" placeholder="Level (0-100)" value={form.level} onChange={(e) => setForm({ ...form, level: Number(e.target.value) })} />
+          <input type="number" className="border p-2 rounded" placeholder="Difficulty (1-10)" value={form.difficulty} onChange={(e) => setForm({ ...form, difficulty: Number(e.target.value) })} />
+          <input className="border p-2 rounded" placeholder="Category" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} />
+          <input type="number" className="border p-2 rounded" placeholder="Experience (months)" value={form.experience} onChange={(e) => setForm({ ...form, experience: e.target.value })} />
+          <input type="number" className="border p-2 rounded" placeholder="Used in projects" value={form.usedInProjects} onChange={(e) => setForm({ ...form, usedInProjects: Number(e.target.value) })} />
           <div>
             <label className="block text-sm text-gray-600 mb-1">Upload Icon (optional)</label>
             <input type="file" accept="image/*" onChange={handleFile} />
             {preview && <img src={preview} className="mt-2 w-20 h-20 object-contain rounded" />}
           </div>
-
-          <input
-            className="border p-2 rounded"
-            placeholder="Or Lucide Icon Name"
-            value={form.iconName}
-            onChange={(e) => setForm({ ...form, iconName: e.target.value })}
-          />
-
-          <input
-            type="number"
-            className="border p-2 rounded"
-            placeholder="Order"
-            value={form.order}
-            onChange={(e) => setForm({ ...form, order: Number(e.target.value) })}
-          />
+          <input className="border p-2 rounded" placeholder="Or Lucide Icon Name" value={form.iconName} onChange={(e) => setForm({ ...form, iconName: e.target.value })} />
+          <input type="number" className="border p-2 rounded" placeholder="Order" value={form.order} onChange={(e) => setForm({ ...form, order: Number(e.target.value) })} />
         </div>
 
         <div className="flex gap-3 mt-4">
-          <button
-            onClick={saveSkill}
-            disabled={loading}
-            className="bg-indigo-600 text-white px-5 py-2 rounded shadow hover:bg-indigo-700"
-          >
+          <button onClick={saveSkill} disabled={loading} className="bg-indigo-600 text-white px-5 py-2 rounded shadow hover:bg-indigo-700">
             {loading ? "Saving..." : editMode ? "Update Skill" : "Add Skill"}
           </button>
-          {editMode && (
-            <button
-              onClick={resetForm}
-              className="bg-gray-400 text-white px-5 py-2 rounded shadow hover:bg-gray-500"
-            >
-              Cancel
-            </button>
-          )}
+          {editMode && <button onClick={resetForm} className="bg-gray-400 text-white px-5 py-2 rounded shadow hover:bg-gray-500">Cancel</button>}
         </div>
       </motion.div>
 
       {/* Skill List */}
       <div>
         <h2 className="text-xl mb-4 font-semibold">All Skills</h2>
-        {skills.length === 0 && <p className="text-gray-500">No Skills Added Yet</p>}
+        {loading && <p>Loading...</p>}
+        {!loading && skills.length === 0 && <p className="text-gray-500">No Skills Added Yet</p>}
 
         {skills.map((s) => (
-          <motion.div
-            key={s._id}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white p-4 rounded-xl shadow border mb-4 flex justify-between items-center"
-          >
+          <motion.div key={s._id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white p-4 rounded-xl shadow border mb-4 flex justify-between items-center">
             <div className="flex items-center gap-4">
               {s.icon && s.icon.includes("/") ? (
-                <img src={`${API}/uploads/${s.icon}`} alt={s.name} className="w-12 h-12 object-contain rounded" />
+                <img src={`${API_URL}/uploads/${s.icon}`} alt={s.name} className="w-12 h-12 object-contain rounded" />
               ) : (
                 <div className="w-12 h-12 bg-indigo-50 rounded flex items-center justify-center text-indigo-600">
                   <span className="text-sm">{s.icon}</span>
@@ -707,26 +644,16 @@ export default function ManageSkills() {
 
               <div>
                 <h3 className="font-semibold text-lg">{s.name}</h3>
-                <p className="text-gray-600 text-sm">
-                  Level: {s.level}% • Difficulty: {s.difficulty}/10
-                </p>
-                <p className="text-gray-500 text-sm">
-                  Category: {s.category} • Experience: {s.experience}
-                </p>
+                <p className="text-gray-600 text-sm">Level: {s.level}% • Difficulty: {s.difficulty}/10</p>
+                <p className="text-gray-500 text-sm">Category: {s.category} • Experience: {s.experience}</p>
               </div>
             </div>
 
             <div className="flex gap-2">
-              <button
-                onClick={() => openEdit(s)}
-                className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 flex items-center gap-1"
-              >
+              <button onClick={() => openEdit(s)} className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 flex items-center gap-1">
                 <Pencil size={16} /> Edit
               </button>
-              <button
-                onClick={() => deleteSkill(s._id)}
-                className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 flex items-center gap-1"
-              >
+              <button onClick={() => deleteSkill(s._id)} className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 flex items-center gap-1">
                 <Trash2 size={16} /> Delete
               </button>
             </div>
