@@ -5,7 +5,7 @@ import { useState } from "react";
 
 export default function Login() {
   // FIX: API URL MUST BE DEFINED HERE
-  // const API_URL = "http://localhost:5000";
+  
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
