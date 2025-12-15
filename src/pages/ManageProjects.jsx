@@ -26,7 +26,7 @@ export default function ManageProjects() {
 
   const load = async () => {
     try {
-      const res = await fetch(`${API}/projects`);
+      const res = await fetch(`${API}/api/projects`);
       const data = await res.json();
       setProjects(data);
     } catch (err) {
@@ -51,7 +51,8 @@ export default function ManageProjects() {
         if (form[key]) fd.append(key, form[key]);
       });
 
-      await fetch(`${API}/projects`, {
+      await fetch(`${API}/api/projects`, {
+
         method: "POST",
         headers: { Authorization: "Bearer " + token },
         body: fd,
@@ -122,7 +123,8 @@ export default function ManageProjects() {
 
   const deleteProject = async (id) => {
     try {
-      await fetch(`${API}/projects/${id}`, {
+     await fetch(`${API}/api/projects/${id}`, {
+
         method: "DELETE",
         headers: { Authorization: "Bearer " + token },
       });

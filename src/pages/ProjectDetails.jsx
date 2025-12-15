@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-const API_URL = import.meta.env.VITE_API_URL;
+import { API_URL } from "../config";
 
 export default function ProjectDetails() {
   const { id } = useParams();
@@ -10,7 +10,7 @@ export default function ProjectDetails() {
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await fetch(`${API_URL}/projects/${id}`);
+        const res = await fetch(`${API_URL}/api/projects/${id}`);
         const data = await res.json();
         setProject(data); // Correct: backend returns direct object
       } catch (err) {
@@ -60,11 +60,8 @@ export default function ProjectDetails() {
       )}
 
       {project.image && (
-        <img
-          src={project.image}
-          alt={project.title}
-          className="mt-6 rounded shadow"
-        />
+        <img src={`${API_URL}/uploads/${project.image}`} />
+
       )}
     </div>
   );

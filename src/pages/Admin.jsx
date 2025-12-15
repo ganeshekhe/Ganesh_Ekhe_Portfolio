@@ -1,9 +1,9 @@
+import { API_URL } from "../config";
 
 import { useState } from "react";
 
 export default function Admin() {
   // const API_URL = "http://localhost:5000";
-const API_URL = import.meta.env.VITE_API_URL;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
